@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumador con JWT</title>
+</head>
+
+<body>
+    <button onclick="getTokenAndSum()">Obtener Token y Sumar</button>
+    <p id="result"></p>
+
+    <script>
+        async function getTokenAndSum() {
+            try {
+                // Hacer fetch para obtener el token JWT
+                const loginResponse = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'raul',
+                        password: '1234'
+                    })
+                });
+
+                const loginData = await loginResponse.json();
+                console.log('Respuesta de inicio de sesión:', loginData);
+
+                const {
+                    token
+                } = loginData;
+
+                // Hacer fetch para llamar a la función sum con el token obtenido
+                const sumResponse = await fetch('http://localhost:3000/sum', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const sumData = await sumResponse.json();
+                console.log('Respuesta de suma:', sumData);
+
+                const {
+                    suma
+                } = sumData;
+
+                // Mostrar el resultado de la suma debajo del botón
+                document.getElementById('result').innerText = `El resultado de la suma es: ${suma}`;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>
